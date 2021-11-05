@@ -2,6 +2,8 @@ const { Client, MessageEmbed, Intents } = require('discord.js');
 const axios = require('axios')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
+require('dotenv').config();
+
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -22,8 +24,8 @@ client.on('message', async (message) => {
 
             await message.channel.send({ embed: send });
         }
-        else if (message.content.startsWith('!spell')) {
-            let command = await parseSpell(message.content.trim().replace('!spell', ''));
+        else if (message.content.startsWith('!cast')) {
+            let command = await parseSpell(message.content.trim().replace('!cast', ''));
             let total = roll(command)
             let send = {
                 title: `${command.spell}: ${command.ndice}d${command.die}`,
@@ -90,12 +92,7 @@ getItem = async item => {
     }
 }
 
-class NotFoundError extends Error {
-    constructor(message) {
-        super(message); // (1)
-        this.name = "NotFoundError"; // (2)
-    }
-}
 
 
-client.login('ODE5NjYzMTUzNzA4MTM4NTk3.YEp4zA.8Yformhhnv2TqPd8ttxPEXo67EE');
+client.login(process.env.TOKEN);
+console.log(process.env.TOKEN);

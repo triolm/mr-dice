@@ -20,7 +20,11 @@ module.exports.parseSpell = async msg => {
 
     command.spell = msg.trim().toLowerCase().replace(" ", "-")
     spell = await getSpell(command.spell);
-    spellDice = getDice(spell.damage.damage_at_slot_level[spell.level]);
+    try {
+        spellDice = getDice(spell.damage.damage_at_slot_level ? spell.damage.damage_at_slot_level[spell.level] : spell.damage.damage_at_character_level[Object.keys(spell.damage.damage_at_character_level)[0]]);
+    } catch (e) {
+        throw new NotFoundError("Spell does not do damage")
+    }
     command.ndice = spellDice.ndice
     command.die = spellDice.die
 
@@ -67,4 +71,12 @@ getMod = msg => {
         mod = 0;
     }
     return mod
+}
+
+
+class NotFoundError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "NotFoundError";
+    }
 }
