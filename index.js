@@ -2,6 +2,7 @@ const { Client, MessageEmbed, Intents } = require('discord.js');
 const axios = require('axios')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
+const { NotFoundError, InputError } = require('./errors')
 require('dotenv').config();
 
 
@@ -37,8 +38,8 @@ client.on('message', async (message) => {
             await message.channel.send({ embed: send });
         }
 
-        else if (message.content.startsWith('!item')) {
-            let command = await parseItem(message.content.trim().replace('!item', ''));
+        else if (message.content.startsWith('!weapon')) {
+            let command = await parseItem(message.content.trim().replace('!weapon', ''));
 
             let total = roll(command)
             let send = {
@@ -51,7 +52,7 @@ client.on('message', async (message) => {
             await message.channel.send({ embed: send });
         }
     } catch (e) {
-        if (e instanceof NotFoundError) {
+        if (e instanceof NotFoundError || e instanceof InputError) {
             let send = {
                 title: `Error`,
                 description: e.message,

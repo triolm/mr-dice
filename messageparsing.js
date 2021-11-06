@@ -1,3 +1,5 @@
+const { InputError } = require('./errors')
+
 module.exports.parseRoll = msg => {
     let command = {}
 
@@ -7,7 +9,9 @@ module.exports.parseRoll = msg => {
     dice = getDice(msg)
     command.ndice = dice.ndice
     command.die = dice.die
-
+    if (!command.ndice || !command.die) {
+        throw new InputError("Type !help for help")
+    }
     return command;
 }
 
@@ -23,7 +27,7 @@ module.exports.parseSpell = async msg => {
     try {
         spellDice = getDice(spell.damage.damage_at_slot_level ? spell.damage.damage_at_slot_level[spell.level] : spell.damage.damage_at_character_level[Object.keys(spell.damage.damage_at_character_level)[0]]);
     } catch (e) {
-        throw new NotFoundError("Spell does not do damage")
+        throw new InputError("Spell does not do damage")
     }
     command.ndice = spellDice.ndice
     command.die = spellDice.die
@@ -71,12 +75,4 @@ getMod = msg => {
         mod = 0;
     }
     return mod
-}
-
-
-class NotFoundError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotFoundError";
-    }
 }
