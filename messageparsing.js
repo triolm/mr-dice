@@ -23,7 +23,7 @@ module.exports.parseSpell = async msg => {
     msg = msg.split('-')[0]
 
     command.spell = msg.trim().toLowerCase().replace(" ", "-")
-    spell = await getSpell(command.spell);
+    spell = await getItem(command.spell, "spells");
     try {
         spellDice = getDice(spell.damage.damage_at_slot_level ? spell.damage.damage_at_slot_level[spell.level] : spell.damage.damage_at_character_level[Object.keys(spell.damage.damage_at_character_level)[0]]);
     } catch (e) {
@@ -42,9 +42,14 @@ module.exports.parseItem = async msg => {
     msg = msg.split('+')[0]
     msg = msg.split('-')[0]
 
-    command.item = msg.trim().toLowerCase().replace(" ", "-")
+    command.item = msg.trim().toLowerCase().replaceAll(" ", "-")
     item = await getItem(command.item);
-    itemDice = getDice(item.damage.damage_dice);
+    try {
+        itemDice = getDice(item.damage.damage_dice);
+    }
+    catch (e) {
+        throw new InputError("Item does not do damage")
+    }
     command.ndice = itemDice.ndice
     command.die = itemDice.die
 

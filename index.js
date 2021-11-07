@@ -2,7 +2,8 @@ const { Client, MessageEmbed, Intents } = require('discord.js');
 const axios = require('axios')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
-const { NotFoundError, InputError } = require('./errors')
+const { formatMsg, getDesc } = require('./messageformatting.js');
+const { NotFoundError, InputError } = require('./errors.js')
 require('dotenv').config();
 
 
@@ -12,45 +13,33 @@ client.on('ready', () => {
 
 client.on('message', async (message) => {
     try {
+        let send;
         if (message.content.startsWith("!roll")) {
-
             let command = parseRoll(message.content.trim().replace('!roll', ''));
-            let total = roll(command)
-            let send = {
-                title: `${command.ndice}d${command.die}`,
-                description: total,
-                color: 0xD7C363
-            }
-            if (command.mod) send.title += (command.mod < 0 ? " - " : " + ") + command.mod
+            send = formatMsg(command)
 
-            await message.channel.send({ embed: send });
         }
         else if (message.content.startsWith('!cast')) {
             let command = await parseSpell(message.content.trim().replace('!cast', ''));
-            let total = roll(command)
-            let send = {
-                title: `${command.spell}: ${command.ndice}d${command.die}`,
-                description: total,
-                color: 0xD7C363
-            }
-            if (command.mod) send.title += (command.mod < 0 ? " - " : " + ") + command.mod
-
-            await message.channel.send({ embed: send });
+            send = formatMsg(command)
         }
-
         else if (message.content.startsWith('!weapon')) {
             let command = await parseItem(message.content.trim().replace('!weapon', ''));
-
-            let total = roll(command)
-            let send = {
-                title: `${command.item}: ${command.ndice}d${command.die}`,
-                description: total,
-                color: 0xD7C363
-            }
-            if (command.mod) send.title += (command.mod < 0 ? " - " : " + ") + command.mod
-
-            await message.channel.send({ embed: send });
+            send = formatMsg(command)
         }
+        else if (message.content.startsWith("!item")) {
+            let command = message.content.replace('!item', '').trim().replaceAll(" ", "-").toLowerCase();
+            send = await getDesc(command, "equipment")
+        }
+        else if (message.content.toLowerCase().startsWith("!magicitem")) {
+            let command = message.content.replace('!magicitem', '').trim().replaceAll(" ", "-").toLowerCase();
+            send = await getDesc(command, "magic-items")
+        }
+        else if (message.content.toLowerCase().startsWith("!spelldesc")) {
+            let command = message.content.replace('!spelldesc', '').trim().replaceAll(" ", "-").toLowerCase();
+            send = await getDesc(command, "spells")
+        }
+        await message.channel.send({ embed: send });
     } catch (e) {
         if (e instanceof NotFoundError || e instanceof InputError) {
             let send = {
@@ -60,7 +49,9 @@ client.on('message', async (message) => {
             }
             await message.channel.send({ embed: send });
         }
-        else { console.log(e) }
+        else {
+            console.log(e)
+        }
     }
 })
 
@@ -74,18 +65,9 @@ roll = command => {
     return total;
 }
 
-getSpell = async spell => {
+getItem = async (item, category = "equipment") => {
     try {
-        res = await axios.get(`https://www.dnd5eapi.co/api/spells/${spell}`)
-        return res.data;
-    }
-    catch {
-        throw new NotFoundError("Spell not found")
-    }
-}
-getItem = async item => {
-    try {
-        res = await axios.get(`https://www.dnd5eapi.co/api/equipment/${item}`)
+        res = await axios.get(`https://www.dnd5eapi.co/api/${category}/${item}`)
         return res.data;
     }
     catch {
@@ -93,7 +75,4 @@ getItem = async item => {
     }
 }
 
-
-
 client.login(process.env.TOKEN);
-console.log(process.env.TOKEN);
