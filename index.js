@@ -68,6 +68,18 @@ roll = command => {
     return total;
 }
 
+rollSeparate = (command) => {
+    roll.nums = []
+    roll.total = 0
+    for (i = 0; i < command.ndice; i++) {
+        n = Math.ceil(Math.random() * command.die);
+        roll.nums.push(n);
+        roll.total += n;
+    }
+    roll.total += command.mod;
+    return roll
+}
+
 getItem = async (item, category = "equipment") => {
     try {
         res = await axios.get(`https://www.dnd5eapi.co/api/${category}/${item}`)

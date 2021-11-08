@@ -2,6 +2,10 @@ const { InputError } = require('./errors')
 
 module.exports.parseRoll = msg => {
     let command = {}
+    if (msg.includes("separate")) {
+        msg.replace("separate", "")
+        command.separate = true;
+    }
 
     command.mod = getMod(msg);
     msg = msg.split('+')[0]
@@ -14,6 +18,9 @@ module.exports.parseRoll = msg => {
     }
     if (command.ndice > 1000000 || command.die > 1000000) {
         throw new InputError("Numbers too large")
+    }
+    if (command.ndice > 100) {
+        command.separate = false;
     }
     return command;
 }
@@ -33,14 +40,17 @@ module.exports.parseSpell = async msg => {
 
     command.item = msg.trim().toLowerCase().replace(" ", "-")
     spell = await getItem(command.item, "spells");
-    if (!level) { level = spell.level }
-    try {
-        spellDice = getDice(spell.damage.damage_at_slot_level ? spell.damage.damage_at_slot_level[level] : spell.damage.damage_at_character_level[Object.keys(spell.damage.damage_at_character_level)[0]]);
-    } catch (e) {
-        throw new InputError("Spell does not do damage")
+    if (!level || !(level in (spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level))) {
+        level = (spell.level ? spell.level : Object.keys(spell.damage.damage_at_character_level)[0]);
     }
-    command.ndice = spellDice.ndice
-    command.die = spellDice.die
+    command.item = "Level " + level + " " + command.item;
+    try {
+        spellDice = getDice((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
+    } catch (e) {
+        throw new InputError("Spell does not do damage");
+    }
+    command.ndice = spellDice.ndice;
+    command.die = spellDice.die;
 
     return command;
 }
