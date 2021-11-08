@@ -12,20 +12,30 @@ module.exports.parseRoll = msg => {
     if (!command.ndice || !command.die) {
         throw new InputError("Type !help for help")
     }
+    if (command.ndice > 1000000 || command.die > 1000000) {
+        throw new InputError("Numbers too large")
+    }
     return command;
 }
 
 module.exports.parseSpell = async msg => {
     let command = {}
+    let level = 0
+
+    if (msg.includes('lvl')) {
+        level = parseInt(msg.split('lvl')[1].trim())
+        msg = msg.split('lvl')[0].trim()
+    }
 
     command.mod = getMod(msg);
     msg = msg.split('+')[0]
     msg = msg.split('-')[0]
 
-    command.spell = msg.trim().toLowerCase().replace(" ", "-")
-    spell = await getItem(command.spell, "spells");
+    command.item = msg.trim().toLowerCase().replace(" ", "-")
+    spell = await getItem(command.item, "spells");
+    if (!level) { level = spell.level }
     try {
-        spellDice = getDice(spell.damage.damage_at_slot_level ? spell.damage.damage_at_slot_level[spell.level] : spell.damage.damage_at_character_level[Object.keys(spell.damage.damage_at_character_level)[0]]);
+        spellDice = getDice(spell.damage.damage_at_slot_level ? spell.damage.damage_at_slot_level[level] : spell.damage.damage_at_character_level[Object.keys(spell.damage.damage_at_character_level)[0]]);
     } catch (e) {
         throw new InputError("Spell does not do damage")
     }

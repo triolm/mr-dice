@@ -1,6 +1,6 @@
 const { Client, MessageEmbed, Intents } = require('discord.js');
 const axios = require('axios')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
 const { formatMsg, getDesc } = require('./messageformatting.js');
 const { NotFoundError, InputError } = require('./errors.js')
@@ -11,35 +11,38 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', async (message) => {
+client.on('messageCreate', async (message) => {
     try {
-        let send;
+        let send = "";
+        let called = true;
+        if (!message.content.startsWith('!')) return;
+
         if (message.content.startsWith("!roll")) {
             let command = parseRoll(message.content.trim().replace('!roll', ''));
-            send = formatMsg(command)
-
-        }
-        else if (message.content.startsWith('!cast')) {
+            send = formatMsg(command);
+        } else if (message.content.startsWith('!cast')) {
             let command = await parseSpell(message.content.trim().replace('!cast', ''));
-            send = formatMsg(command)
-        }
-        else if (message.content.startsWith('!weapon')) {
+            send = formatMsg(command);
+        } else if (message.content.startsWith('!weapon')) {
             let command = await parseItem(message.content.trim().replace('!weapon', ''));
-            send = formatMsg(command)
-        }
-        else if (message.content.startsWith("!item")) {
+            send = formatMsg(command);
+        } else if (message.content.startsWith("!item")) {
             let command = message.content.replace('!item', '').trim().replaceAll(" ", "-").toLowerCase();
-            send = await getDesc(command, "equipment")
-        }
-        else if (message.content.toLowerCase().startsWith("!magicitem")) {
+            send = await getDesc(command, "equipment");
+        } else if (message.content.toLowerCase().startsWith("!magicitem")) {
             let command = message.content.replace('!magicitem', '').trim().replaceAll(" ", "-").toLowerCase();
-            send = await getDesc(command, "magic-items")
-        }
-        else if (message.content.toLowerCase().startsWith("!spelldesc")) {
+            send = await getDesc(command, "magic-items");
+        } else if (message.content.toLowerCase().startsWith("!spelldesc")) {
             let command = message.content.replace('!spelldesc', '').trim().replaceAll(" ", "-").toLowerCase();
-            send = await getDesc(command, "spells")
+            send = await getDesc(command, "spells");
+        } else {
+            called = false;
         }
-        await message.channel.send({ embed: send });
+
+        if (called) {
+            await message.channel.send({ embeds: [send] });
+        }
+
     } catch (e) {
         if (e instanceof NotFoundError || e instanceof InputError) {
             let send = {
@@ -47,7 +50,7 @@ client.on('message', async (message) => {
                 description: e.message,
                 color: 0xff6666
             }
-            await message.channel.send({ embed: send });
+            await message.channel.send({ embeds: [send] });
         }
         else {
             console.log(e)

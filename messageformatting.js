@@ -1,11 +1,12 @@
+const { MessageEmbed } = require("discord.js")
+
 module.exports.formatMsg = command => {
     let total = roll(command)
-    let send = {
-        title: `${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die}`,
-        description: total,
-        color: 0xD7C363
-    }
-    if (command.mod) send.title += (command.mod < 0 ? " - " : " + ") + command.mod
+    let send = new MessageEmbed()
+        .setTitle(`${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die}`)
+        .setDescription(total + "")
+        .setColor(0xD7C363)
+    if (command.mod) send.setTitle(send.title + (command.mod < 0 ? " - " : " + ") + command.mod)
 
     return send;
 }
@@ -14,21 +15,18 @@ module.exports.getDesc = async (item, category) => {
 
     data = await getItem(item, category)
 
-    let send = {
-        title: data.name,
-        description: "",
-        fields: [
-        ],
-        color: 0xD7C363
-    }
+    let send = new MessageEmbed()
+        .setTitle(data.name)
+        .setColor(0xD7C363);
+
     if (data.cost) {
-        send.fields.push({
+        send.addFields({
             name: "Cost:",
             value: data.cost.quantity + data.cost.unit
         })
     }
     if (data.weight) {
-        send.fields.push({
+        send.addFields({
             name: "Weight:",
             value: data.weight
         })
