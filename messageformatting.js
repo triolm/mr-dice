@@ -21,7 +21,7 @@ module.exports.formatMsg = command => {
                 value: total + ""
             })
             .setColor(0xD7C363)
-        if (command.mod) send.fields[0].value = send.fields[0].value + (command.mod < 0 ? " - " : " + ") + command.mod
+        if (command.mod) send.description = send.description + "" + (command.mod < 0 ? " - " : " + ") + command.mod
 
     }
 
@@ -52,7 +52,7 @@ module.exports.getDesc = async (item, category) => {
     }
     if (data.desc) {
         send.description = ""
-        for (i in data.desc) {
+        for (i of data.desc) {
             send.description += "\n" + i
         }
     }
@@ -69,15 +69,50 @@ module.exports.getDesc = async (item, category) => {
     if (data.damage) {
         send.addFields({
             name: "Damage:",
-            value: data.damage.damage_dice + " " + data.damage.damage_type.name.toLowerCase()
+            value: data.damage.damage_dice ?? data.damage.damage_at_slot_level[data.level] + " " + data.damage.damage_type.name.toLowerCase() ?? " "
         });
     }
     if (data.range) {
         send.addFields({
             name: "Range:",
-            value: data.category_range + " " + data.range.normal
+            value: data.category_range ? data.category_range : "" + " " + data.range.normal ?? data.range
+            //still undef in spell
         });
     }
-    console.log(send)
     return send;
 }
+
+module.exports.helpObj = new MessageEmbed()
+    .setTitle("Commands")
+    .addFields({
+        name: "!roll <number of dice>d<sides of dice> + <modifier>",
+        value: "Example: !roll 6d8 + 12\nThis rolls 6 eight sided dice and adds 10. Modifier is optional"
+    })
+    .addFields({
+        name: "!roll <number of dice>d<sides of dice> + <modifier> separate",
+        value: "Example: !roll 6d8 + 12 separate\nThis rolls 6 eight sided dice and adds 10, and separately displays the rolls."
+    })
+    .addFields({
+        name: "!cast <spell> + 10",
+        value: "Example: !cast fireball + 10\nThis rolls 8d6, the damage for fireball and adds 10."
+    })
+    .addFields({
+        name: "!cast <spell> lvl 4",
+        value: "Example: !cast fireball lvl 4\nThis rolls 9d6, the damage for fireball when cast at level 4."
+    })
+    .addFields({
+        name: "!weapon <weapon> + 10",
+        value: "Example: !weapon shortsword\nThis rolls the default dice for a shortsword and adds 10."
+    })
+    .addFields({
+        name: "!spelldesc <spell>",
+        value: "Example: !spelldesc fireball\nThis retrieves the description of the spell fireball."
+    })
+    .addFields({
+        name: "!item <item>",
+        value: "Example: !item shortsword\nThis retrieves the description of a shortsword."
+    })
+    .addFields({
+        name: "!magicitem <item>",
+        value: "Example: !magicitem wand of fireballs\nThis retrieves the description of a wand of fireballs."
+    })

@@ -2,7 +2,7 @@ const { Client, MessageEmbed, Intents } = require('discord.js');
 const axios = require('axios')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
-const { formatMsg, getDesc } = require('./messageformatting.js');
+const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
 const { NotFoundError, InputError } = require('./errors.js')
 require('dotenv').config();
 
@@ -35,6 +35,8 @@ client.on('messageCreate', async (message) => {
         } else if (message.content.toLowerCase().startsWith("!spelldesc")) {
             let command = message.content.replace('!spelldesc', '').trim().replaceAll(" ", "-").toLowerCase();
             send = await getDesc(command, "spells");
+        } else if (message.content.toLowerCase().startsWith("!help")) {
+            send = helpObj;
         } else {
             called = false;
         }
@@ -89,5 +91,6 @@ getItem = async (item, category = "equipment") => {
         throw new NotFoundError("Item not found")
     }
 }
+
 
 client.login(process.env.TOKEN);
