@@ -56,6 +56,45 @@ module.exports.getDesc = async (item, category) => {
             send.description += "\n" + i
         }
     }
+    if (data.higher_level) {
+        higherlvl = ""
+        for (i of data.higher_level) {
+            higherlvl += i + "\n";
+        }
+        send.addFields({
+            name: "At Higher Levels:",
+            value: higherlvl
+        })
+    }
+    if (data.components) {
+        components = ""
+        for (i of data.components) {
+            components += i + " ";
+        }
+        send.addFields({
+            name: "Components:",
+            value: components
+        })
+    }
+    if (data.material) {
+        send.addFields({
+            name: "Material:",
+            value: data.material
+        })
+    }
+
+    if (data.casting_time) {
+        send.addFields({
+            name: "Casting Time:",
+            value: data.casting_time
+        })
+    }
+    if (data.duration) {
+        send.addFields({
+            name: "Duration:",
+            value: (data.concentration ? data.concentration + " " : "") + data.duration
+        })
+    }
     if (data.properties) {
         properties = ""
         for (i of data.properties) {
@@ -67,21 +106,29 @@ module.exports.getDesc = async (item, category) => {
         })
     }
     if (data.damage) {
-        send.addFields({
-            name: "Damage:",
-            value: data.damage.damage_dice ?? data.damage.damage_at_slot_level[data.level] + " " + data.damage.damage_type.name.toLowerCase() ?? " "
-        });
+        val = ""
+        if (data.damage.damage_at_slot_level) {
+            val = data.damage.damage_at_slot_level[data.level]
+        }
+        else if (data.damage.damage_at_character_level) {
+            val = data.damage.damage_at_character_level[Object.keys(data.damage.damage_at_character_level)[0]]
+        }
+        val += " " + data.damage.damage_type.name.toLowerCase()
+        if (val) {
+            send.addFields({
+                name: "Damage:",
+                value: val
+            });
+        }
     }
     if (data.range) {
         send.addFields({
             name: "Range:",
-            value: data.category_range ? data.category_range : "" + " " + data.range.normal ?? data.range
-            //still undef in spell
+            value: (data.category_range ? data.category_range : "") + " " + (data.range.normal ?? data.range)
         });
     }
     return send;
 }
-
 module.exports.helpObj = new MessageEmbed()
     .setTitle("Commands")
     .addFields({
