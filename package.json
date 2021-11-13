@@ -1,10 +1,10 @@
 {
   "name": "mrdice",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "A simple dice rolling and D&D discord bot.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
