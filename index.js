@@ -6,6 +6,8 @@ const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
 const { NotFoundError, InputError } = require('./errors.js')
 require('dotenv').config();
 
+const app = require('express')();
+const port = process.env.PORT || 3000;
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -92,5 +94,12 @@ getItem = async (item, category = "equipment") => {
     }
 }
 
+app.listen(port, () => {
+    console.log("listening on port " + port)
+})
+
+app.get("*", (req, res) => {
+    res.send("Listening")
+})
 
 client.login(process.env.TOKEN);
