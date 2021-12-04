@@ -36,8 +36,8 @@ module.exports.getDesc = async (item, category) => {
 
     let send = new MessageEmbed()
         .setTitle(data.name)
+        .setDescription(("Level " + data.level ?? "") + " " + data.school.name.toLowerCase() + (data.ritual ? " (ritual)" : "") + "\n")
         .setColor(0xD7C363);
-
     if (data.cost) {
         send.addFields({
             name: "Cost:",
@@ -51,7 +51,6 @@ module.exports.getDesc = async (item, category) => {
         })
     }
     if (data.desc) {
-        send.description = ""
         for (i of data.desc) {
             send.description += "\n" + i
         }
@@ -92,7 +91,7 @@ module.exports.getDesc = async (item, category) => {
     if (data.duration) {
         send.addFields({
             name: "Duration:",
-            value: (data.concentration ? data.concentration + " " : "") + data.duration
+            value: (data.concentration ? "Concentration\n" : "") + data.duration
         })
     }
     if (data.properties) {
