@@ -1,9 +1,9 @@
 const { Client, MessageEmbed, Intents } = require('discord.js');
 const axios = require('axios')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
 const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
-const { NotFoundError, InputError } = require('./errors.js')
+const { NotFoundError, InputError } = require('./errors.js');
 require('dotenv').config();
 
 client.on('ready', () => {
@@ -12,53 +12,62 @@ client.on('ready', () => {
 
 client.on('messageCreate', async (message) => {
     try {
-        let send = "";
-        let called = true;
-        if (!message.content.startsWith('!')) return;
-
-        if (message.content.startsWith("!roll")) {
-            let command = parseRoll(message.content.trim().replace('!roll', ''));
-            send = formatMsg(command);
-        } else if (message.content.startsWith('!cast')) {
-            let command = await parseSpell(message.content.trim().replace('!cast', ''));
-            send = formatMsg(command);
-        } else if (message.content.startsWith('!weapon')) {
-            let command = await parseItem(message.content.trim().replace('!weapon', ''));
-            send = formatMsg(command);
-        } else if (message.content.startsWith("!item")) {
-            let command = message.content.replace('!item', '').trim().replaceAll(" ", "-").toLowerCase();
-            send = await getDesc(command, "equipment");
-        } else if (message.content.toLowerCase().startsWith("!magicitem")) {
-            let command = message.content.replace('!magicitem', '').trim().replaceAll(" ", "-").toLowerCase();
-            send = await getDesc(command, "magic-items");
-        } else if (message.content.toLowerCase().startsWith("!spelldesc")) {
-            let command = message.content.replace('!spelldesc', '').trim().replaceAll(" ", "-").toLowerCase();
-            send = await getDesc(command, "spells");
-        } else if (message.content.toLowerCase().startsWith("!help")) {
-            send = helpObj;
-        } else {
-            called = false;
-        }
+        const { send, called } = await getCmd(message)
 
         if (called) {
             await message.channel.send({ embeds: [send] });
         }
 
     } catch (e) {
-        if (e instanceof NotFoundError || e instanceof InputError) {
-            let send = {
-                title: `Error`,
-                description: e.message,
-                color: 0xff6666
-            }
-            await message.channel.send({ embeds: [send] });
-        }
-        else {
-            console.log(e)
-        }
+        handleErr(e, message);
     }
 })
 
+getCmd = async (message) => {
+    send = ""
+    called = true;
+    if (!message.content.startsWith('!')) return;
+
+    if (message.content.startsWith("!roll")) {
+        let command = parseRoll(message.content.trim().replace('!roll', ''));
+        send = formatMsg(command);
+    } else if (message.content.startsWith('!cast')) {
+        let command = await parseSpell(message.content.trim().replace('!cast', ''));
+        send = formatMsg(command);
+    } else if (message.content.startsWith('!weapon')) {
+        let command = await parseItem(message.content.trim().replace('!weapon', ''));
+        send = formatMsg(command);
+    } else if (message.content.startsWith("!item")) {
+        let command = message.content.replace('!item', '').trim().replaceAll(" ", "-").toLowerCase();
+        send = await getDesc(command, "equipment");
+    } else if (message.content.toLowerCase().startsWith("!magicitem")) {
+        let command = message.content.replace('!magicitem', '').trim().replaceAll(" ", "-").toLowerCase();
+        send = await getDesc(command, "magic-items");
+    } else if (message.content.toLowerCase().startsWith("!spelldesc")) {
+        let command = message.content.replace('!spelldesc', '').trim().replaceAll(" ", "-").toLowerCase();
+        send = await getDesc(command, "spells");
+    } else if (message.content.toLowerCase().startsWith("!help")) {
+        send = helpObj;
+    } else {
+        called = false;
+    }
+
+    return { send, called }
+}
+
+handleErr = async (e, message) => {
+    if (e instanceof NotFoundError || e instanceof InputError) {
+        let send = {
+            title: `Error`,
+            description: e.message,
+            color: 0xff6666
+        }
+        await message.channel.send({ embeds: [send] });
+    }
+    else {
+        console.log(e)
+    }
+}
 
 roll = command => {
     total = 0

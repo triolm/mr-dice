@@ -36,8 +36,11 @@ module.exports.getDesc = async (item, category) => {
 
     let send = new MessageEmbed()
         .setTitle(data.name)
-        .setDescription(("Level " + data.level ?? "") + " " + data.school.name.toLowerCase() + (data.ritual ? " (ritual)" : "") + "\n")
-        .setColor(0xD7C363);
+        .setDescription("")
+    if (data.level) {
+        send.setDescription(("Level " + data.level ?? "") + " " + data.school.name.toLowerCase() + (data.ritual ? " (ritual)" : "") + "\n")
+    }
+    send.setColor(0xD7C363);
     if (data.cost) {
         send.addFields({
             name: "Cost:",
@@ -112,7 +115,9 @@ module.exports.getDesc = async (item, category) => {
         else if (data.damage.damage_at_character_level) {
             val = data.damage.damage_at_character_level[Object.keys(data.damage.damage_at_character_level)[0]]
         }
-        val += " " + data.damage.damage_type.name.toLowerCase()
+        if (data.damage.damage_type) {
+            val += " " + (data.damage.damage_type.name.toLowerCase())
+        }
         if (val) {
             send.addFields({
                 name: "Damage:",
