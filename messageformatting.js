@@ -78,6 +78,16 @@ module.exports.getDesc = async (item, category) => {
             value: components
         })
     }
+    if (data.classes) {
+        classes = ""
+        for (i of data.classes) {
+            classes += i.index + ", ";
+        }
+        send.addFields({
+            name: "Classes:",
+            value: classes.slice(0, -2)
+        })
+    }
     if (data.material) {
         send.addFields({
             name: "Material:",

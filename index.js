@@ -26,7 +26,7 @@ client.on('messageCreate', async (message) => {
 getCmd = async (message) => {
     send = ""
     called = true;
-    if (!message.content.startsWith('!')) return;
+    if (!message.content.startsWith('!')) return { send, called: false };
 
     if (message.content.startsWith("!roll")) {
         let command = parseRoll(message.content.trim().replace('!roll', ''));
