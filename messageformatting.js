@@ -177,3 +177,7 @@ module.exports.helpObj = new MessageEmbed()
         name: "!magicitem <item>",
         value: "Example: !magicitem wand of fireballs\nThis retrieves the description of a wand of fireballs."
     })
+    .addFields({
+        name: "Further Issues",
+        value: "For further issues or questions, contact DruidPotato#0313."
+    })
