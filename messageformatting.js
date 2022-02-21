@@ -145,6 +145,7 @@ module.exports.getDesc = async (item, category) => {
 }
 module.exports.helpObj = new MessageEmbed()
     .setTitle("Commands")
+    .setColor(0xD7C363)
     .addFields({
         name: "!roll <number of dice>d<sides of dice> + <modifier>",
         value: "Example: !roll 6d8 + 12\nThis rolls 6 eight sided dice and adds 10. Modifier is optional"
@@ -176,6 +177,10 @@ module.exports.helpObj = new MessageEmbed()
     .addFields({
         name: "!magicitem <item>",
         value: "Example: !magicitem wand of fireballs\nThis retrieves the description of a wand of fireballs."
+    })
+    .addFields({
+        name: "Privacy Policy",
+        value: "https://github.com/triolm/mr-dice/blob/master/privacy_policy.md"
     })
     .addFields({
         name: "Further Issues",
