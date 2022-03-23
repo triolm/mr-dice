@@ -4,11 +4,8 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
 const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
 const { NotFoundError, InputError } = require('./errors.js');
+const fs = require('fs');
 require('dotenv').config();
-
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-});
 
 client.on('messageCreate', async (message) => {
     try {
@@ -100,4 +97,11 @@ getItem = async (item, category = "equipment") => {
     }
 }
 
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN)
+    .then(() => {
+        let d = new Date(Date.now()).toString();
+        fs.appendFile("./log.txt", `${d}\nLogged in as ${client.user.tag}\nCurrently in ${client.guilds.cache.size} guilds\n\n`, () => { });
+    }).catch((e) => {
+        let d = new Date(Date.now()).toString();
+        fs.appendFile("./log.txt", `${d}\n${e}\n\n`, () => { });
+    })
