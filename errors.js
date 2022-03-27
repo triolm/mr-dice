@@ -8,6 +8,6 @@ module.exports.NotFoundError = class NotFoundError extends Error {
 module.exports.InputError = class InputError extends Error {
     constructor(message) {
         super(message);
-        this.name = "NotFoundError";
+        this.name = "InputError";
     }
 }

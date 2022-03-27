@@ -93,7 +93,8 @@ getItem = async (item, category = "equipment") => {
         return res.data;
     }
     catch {
-        throw new NotFoundError("Item not found")
+        console.log(category)
+        throw new NotFoundError(`${category == "spells" ? "Spell" : "Item"} not found`)
     }
 }
 
