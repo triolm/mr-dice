@@ -58,7 +58,7 @@ module.exports.getDesc = async (item, category) => {
             send.description += "\n" + i
         }
     }
-    if (data.higher_level) {
+    if (data.higher_level.length) {
         higherlvl = ""
         for (i of data.higher_level) {
             higherlvl += i + "\n";
