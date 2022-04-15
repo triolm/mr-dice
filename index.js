@@ -4,6 +4,7 @@ const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
 const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
 const { handleErr } = require('./errors.js');
 const fs = require('fs');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 require('dotenv').config();
 
 client.on('messageCreate', async (message) => {
@@ -17,7 +18,33 @@ client.on('messageCreate', async (message) => {
     } catch (e) {
         handleErr(e, message);
     }
-})
+});
+
+(async () => {
+    await client.login(process.env.TOKEN)
+        .then(() => {
+            let d = new Date(Date.now()).toString();
+            fs.appendFile("./log.txt", `${d}\nLogged in as ${client.user.tag}\nCurrently in ${client.guilds.cache.size} guilds\n\n`, () => { });
+        }).catch((e) => {
+            let d = new Date(Date.now()).toString();
+            fs.appendFile("./log.txt", `${d}\n${e}\n\n`, () => { });
+        })
+
+    client.api.applications(client.user.id).guilds('771106320623206460').commands.post({
+        data: new SlashCommandBuilder()
+            .setName('roll')
+            .setDescription('Roll some dice')
+            .addStringOption(option =>
+                option.setName('amount')
+                    .setDescription('amount of dice')
+                    .setRequired(true))
+            .addStringOption(option =>
+                option.setName('sides')
+                    .setDescription('number of sides')
+                    .setRequired(true))
+    })
+})()
+
 
 getCmd = async (message) => {
     send = ""
@@ -50,12 +77,3 @@ getCmd = async (message) => {
 
     return { send, called }
 }
-
-client.login(process.env.TOKEN)
-    .then(() => {
-        let d = new Date(Date.now()).toString();
-        fs.appendFile("./log.txt", `${d}\nLogged in as ${client.user.tag}\nCurrently in ${client.guilds.cache.size} guilds\n\n`, () => { });
-    }).catch((e) => {
-        let d = new Date(Date.now()).toString();
-        fs.appendFile("./log.txt", `${d}\n${e}\n\n`, () => { });
-    })
