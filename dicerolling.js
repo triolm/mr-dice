@@ -1,0 +1,33 @@
+const axios = require('axios')
+
+module.exports.roll = command => {
+    total = 0
+    for (i = 0; i < command.ndice; i++) {
+        total += Math.ceil(Math.random() * command.die);
+    }
+    total += command.mod;
+    return total;
+}
+
+module.exports.rollSeparate = (command) => {
+    roll.nums = []
+    roll.total = 0
+    for (i = 0; i < command.ndice; i++) {
+        n = Math.ceil(Math.random() * command.die);
+        roll.nums.push(n);
+        roll.total += n;
+    }
+    roll.total += command.mod;
+    return roll
+}
+
+module.exports.getItem = async (item, category = "equipment") => {
+    try {
+        res = await axios.get(`https://www.dnd5eapi.co/api/${category}/${item}`)
+        return res.data;
+    }
+    catch (e) {
+        console.log(e)
+        throw new NotFoundError(`${category == "spells" ? "Spell" : "Item"} not found`)
+    }
+}

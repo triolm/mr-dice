@@ -1,4 +1,6 @@
 const { InputError } = require('./errors')
+const { getItem } = require('./dicerolling.js');
+
 
 module.exports.parseRoll = msg => {
     let command = {}

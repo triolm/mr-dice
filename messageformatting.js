@@ -1,3 +1,5 @@
+const { roll, rollSeparate, getItem } = require('./dicerolling.js');
+
 const { MessageEmbed } = require("discord.js")
 
 module.exports.formatMsg = command => {
@@ -58,14 +60,14 @@ module.exports.getDesc = async (item, category) => {
             send.description += "\n" + i
         }
     }
-    if (data.higher_level.length) {
+    if (data.higher_level && data.higher_level.length) {
         higherlvl = ""
         for (i of data.higher_level) {
             higherlvl += i + "\n";
         }
         send.addFields({
             name: "At Higher Levels:",
-            value: higherlvl
+            value: higherlvl + "eee"
         })
     }
     if (data.components) {
@@ -107,7 +109,7 @@ module.exports.getDesc = async (item, category) => {
             value: (data.concentration ? "Concentration\n" : "") + data.duration
         })
     }
-    if (data.properties) {
+    if (data.properties && data.properties.length) {
         properties = ""
         for (i of data.properties) {
             properties += ", " + i.name
