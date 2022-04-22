@@ -10,6 +10,7 @@ module.exports.roll = command => {
 }
 
 module.exports.rollSeparate = (command) => {
+    roll = {}
     roll.nums = []
     roll.total = 0
     for (i = 0; i < command.ndice; i++) {
