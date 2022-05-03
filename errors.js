@@ -13,16 +13,24 @@ InputError = class InputError extends Error {
 }
 
 module.exports.
-    handleErr = async (e, message) => {
-        if (e instanceof NotFoundError || e instanceof InputError) {
+    handleErr = async (e) => {
+        if (e.message && (e instanceof NotFoundError || e instanceof InputError)) {
             let send = {
                 title: `Error`,
                 description: e.message,
                 color: 0xff6666
             }
-            await message.channel.send({ embeds: [send] });
+            // await message.channel.send({ embeds: [send] });
+            return send;
         }
         else {
             console.log(e)
+            let send = {
+                title: `Error`,
+                description: "An error occured.",
+                color: 0xff6666
+            }
+            // await message.channel.send({ embeds: [send] });
+            return send;
         }
     }

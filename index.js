@@ -1,6 +1,7 @@
 const { Client, MessageEmbed, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 const { parseRoll, parseSpell, parseItem } = require('./messageparsing.js');
+const { roll } = require('./dicerolling.js');
 const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
 const { handleErr } = require('./errors.js');
 const fs = require('fs');
@@ -20,19 +21,36 @@ client.on('messageCreate', async (message) => {
         }
 
     } catch (e) {
-        handleErr(e, message);
+        await message.channel.send({ embeds: [await handleErr(e)] });
     }
 });
 
 client.on('interactionCreate', async interaction => {
     try {
         if (!interaction.isCommand()) return;
-        if (interaction.commandName == 'spelldesc')
+
+        if (interaction.commandName == 'spelldesc') {
             await interaction.reply({ embeds: [await getDesc(interaction.options.get("spell").value, "spells")] });
-        else
-            await interaction.reply({ content: "*confused bot noises*", ephemeral: true });
-    } catch {
-        await interaction.reply({ embeds: [await getDesc(interaction.options.get("spell").value, "spells")] });
+        }
+        if (interaction.commandName == 'itemdesc') {
+            await interaction.reply({ embeds: [await getDesc(interaction.options.get("item").value, "equipment")] });
+        }
+        if (interaction.commandName == 'roll') {
+            await interaction.reply({
+                embeds: [formatMsg(
+                    {
+                        ndice: interaction.options.get("amount").value,
+                        die: interaction.options.get("sides").value,
+                        mod: interaction.options.get("modifier") ? interaction.options.get("modifier").value : 0,
+                        separate: interaction.options.get("separate") ? interaction.options.get("separate").value : false,
+                    }
+
+                )]
+            });
+        }
+
+    } catch (e) {
+        await interaction.reply({ embeds: [await handleErr(e)] });
     }
 });
 
@@ -59,13 +77,29 @@ commands = [
         .addIntegerOption(option =>
             option.setName('sides')
                 .setDescription('number of sides')
-                .setRequired(true)),
+                .setRequired(true))
+        .addIntegerOption(option =>
+            option.setName('modifier')
+                .setDescription('number to add to total')
+                .setRequired(false))
+        .addBooleanOption(option =>
+            option.setName('separate')
+                .setDescription('show individual dice roles')
+                .setRequired(false)),
+
     new SlashCommandBuilder()
         .setName('spelldesc')
         .setDescription('Get D&D spell info')
         .addStringOption(option =>
             option.setName('spell')
-                .setDescription('spell to get description of')
+                .setDescription('Spell to get description of')
+                .setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('itemdesc')
+        .setDescription('Get D&D item info')
+        .addStringOption(option =>
+            option.setName('item')
+                .setDescription('Item to get description of')
                 .setRequired(true))
 ]
 

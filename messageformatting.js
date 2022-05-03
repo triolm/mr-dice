@@ -6,6 +6,12 @@ module.exports.formatMsg = command => {
     let total = 0
     let send = new MessageEmbed()
 
+    if (command.ndice > 1000000 || command.die > 1000000) {
+        throw new InputError("Numbers too large")
+    }
+    if (command.ndice > 100) {
+        command.separate = false;
+    }
     if (!command.separate) {
         total = roll(command)
         send.setTitle(`${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die}`)
