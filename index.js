@@ -5,6 +5,10 @@ const { formatMsg, getDesc, helpObj } = require('./messageformatting.js');
 const { handleErr } = require('./errors.js');
 const fs = require('fs');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+
+
 require('dotenv').config();
 
 client.on('messageCreate', async (message) => {
@@ -20,30 +24,68 @@ client.on('messageCreate', async (message) => {
     }
 });
 
+client.on('interactionCreate', async interaction => {
+    try {
+        if (!interaction.isCommand()) return;
+        if (interaction.commandName == 'spelldesc')
+            await interaction.reply({ embeds: [await getDesc(interaction.options.get("spell").value, "spells")] });
+        else
+            await interaction.reply({ content: "*confused bot noises*", ephemeral: true });
+    } catch {
+        await interaction.reply({ embeds: [await getDesc(interaction.options.get("spell").value, "spells")] });
+    }
+});
+
 (async () => {
     await client.login(process.env.TOKEN)
         .then(() => {
             let d = new Date(Date.now()).toString();
+            console.log(`${d}\nLogged in as ${client.user.tag}\nCurrently in ${client.guilds.cache.size} guilds`)
             fs.appendFile("./log.txt", `${d}\nLogged in as ${client.user.tag}\nCurrently in ${client.guilds.cache.size} guilds\n\n`, () => { });
         }).catch((e) => {
             let d = new Date(Date.now()).toString();
             fs.appendFile("./log.txt", `${d}\n${e}\n\n`, () => { });
         })
-
-    client.api.applications(client.user.id).guilds('771106320623206460').commands.post({
-        data: new SlashCommandBuilder()
-            .setName('roll')
-            .setDescription('Roll some dice')
-            .addStringOption(option =>
-                option.setName('amount')
-                    .setDescription('amount of dice')
-                    .setRequired(true))
-            .addStringOption(option =>
-                option.setName('sides')
-                    .setDescription('number of sides')
-                    .setRequired(true))
-    })
 })()
+
+commands = [
+    new SlashCommandBuilder()
+        .setName('roll')
+        .setDescription('Roll some dice')
+        .addIntegerOption(option =>
+            option.setName('amount')
+                .setDescription('amount of dice')
+                .setRequired(true))
+        .addIntegerOption(option =>
+            option.setName('sides')
+                .setDescription('number of sides')
+                .setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('spelldesc')
+        .setDescription('Get D&D spell info')
+        .addStringOption(option =>
+            option.setName('spell')
+                .setDescription('spell to get description of')
+                .setRequired(true))
+]
+
+const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
+
+(async () => {
+    try {
+        console.log('Started refreshing application (/) commands.');
+
+        await rest.put(
+            Routes.applicationGuildCommands('905977803567145040', '771106320623206460'),
+            { body: commands },
+        );
+
+        console.log('Successfully reloaded application (/) commands.');
+    } catch (error) {
+        console.error(error);
+    }
+})();
+
 
 
 getCmd = async (message) => {
