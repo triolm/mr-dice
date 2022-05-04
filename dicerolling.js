@@ -29,6 +29,6 @@ module.exports.getItem = async (item, category = "equipment") => {
         return res.data;
     }
     catch (e) {
-        throw new NotFoundError(`${category == "spells" ? "Spell" : "Item"} not found`)
+        throw new NotFoundError(`${category == "spells" ? "Spell" : "Item"} ${item} not found`)
     }
 }

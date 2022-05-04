@@ -39,8 +39,8 @@ module.exports.formatMsg = command => {
 }
 
 module.exports.getDesc = async (item, category) => {
-
-    data = await getItem(item, category)
+    item = item
+    data = await getItem(item.replaceAll(" ", "-"), category)
 
     let send = new MessageEmbed()
         .setTitle(data.name)
