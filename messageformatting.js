@@ -186,5 +186,5 @@ module.exports.helpObj = new MessageEmbed()
     })
     .addFields({
         name: "Further Issues",
-        value: "For further issues or questions, contact DruidPotato#0313."
+        value: "For further issues or questions, join our support server at https://discord.gg/haf48fW2YF."
     })
