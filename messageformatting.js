@@ -67,7 +67,7 @@ module.exports.getDesc = async (item, category) => {
         }
         send.addFields({
             name: "At Higher Levels:",
-            value: higherlvl + "eee"
+            value: higherlvl
         })
     }
     if (data.components) {
