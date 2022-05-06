@@ -57,6 +57,29 @@ module.exports.parseSpell = async msg => {
     return command;
 }
 
+module.exports.slashSpell = async (spell, lvl, mod) => {
+    let command = {}
+    let level = lvl
+
+    command.mod = mod
+
+    command.item = spell
+    spell = await getItem(command.item.replaceAll(" ", "-"), "spells");
+    if (!level || !(level in (spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level))) {
+        level = (spell.level ? spell.level : Object.keys(spell.damage.damage_at_character_level)[0]);
+    }
+    command.item = "Level " + level + " " + command.item;
+    try {
+        spellDice = getDice((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
+    } catch (e) {
+        throw new InputError("Spell does not do damage");
+    }
+    command.ndice = spellDice.ndice;
+    command.die = spellDice.die;
+
+    return command;
+}
+
 module.exports.parseItem = async msg => {
     let command = {}
 
@@ -66,6 +89,25 @@ module.exports.parseItem = async msg => {
 
     command.item = msg.trim().toLowerCase().replaceAll(" ", "-")
     item = await getItem(command.item);
+    try {
+        itemDice = getDice(item.damage.damage_dice);
+    }
+    catch (e) {
+        throw new InputError("Item does not do damage")
+    }
+    command.ndice = itemDice.ndice
+    command.die = itemDice.die
+
+    return command;
+}
+
+module.exports.slashItem = async (item, mod) => {
+    let command = {}
+
+    command.mod = mod
+
+    command.item = item
+    item = await getItem(command.item.replaceAll(" ", "-"));
     try {
         itemDice = getDice(item.damage.damage_dice);
     }

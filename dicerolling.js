@@ -1,6 +1,7 @@
 const axios = require('axios')
 
 module.exports.roll = command => {
+
     total = 0
     for (i = 0; i < command.ndice; i++) {
         total += Math.ceil(Math.random() * command.die);
@@ -28,7 +29,6 @@ module.exports.getItem = async (item, category = "equipment") => {
         return res.data;
     }
     catch (e) {
-        console.log(e)
-        throw new NotFoundError(`${category == "spells" ? "Spell" : "Item"} not found`)
+        throw new NotFoundError(`${category == "spells" ? "Spell" : "Item"} ${item} not found`)
     }
 }
