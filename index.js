@@ -157,18 +157,11 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
 (async () => {
     try {
-        await rest.put(
-            Routes.applicationGuildCommands('905977803567145040', '771106320623206460'),
-            { body: commands },
-        );
-        await rest.put(
-            Routes.applicationGuildCommands('905977803567145040', '848581941161623552'),
-            { body: commands },
-        );
-        await rest.put(
-            Routes.applicationGuildCommands('905977803567145040', '971214285806137384'),
-            { body: commands },
-        );
+        for (let guild of process.env.BETA.split(" "))
+            await rest.put(
+                Routes.applicationGuildCommands(process.env.CLIENTID, guild),
+                { body: commands },
+            );
 
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
