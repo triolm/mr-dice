@@ -1,11 +1,11 @@
-NotFoundError = class NotFoundError extends Error {
+module.exports.NotFoundError = class NotFoundError extends Error {
     constructor(message) {
         super(message);
         this.name = "NotFoundError";
     }
 }
 
-InputError = class InputError extends Error {
+module.exports.InputError = class InputError extends Error {
     constructor(message) {
         super(message);
         this.name = "InputError";
@@ -14,7 +14,7 @@ InputError = class InputError extends Error {
 
 module.exports.
     handleErr = async (e) => {
-        if (e.message && (e instanceof NotFoundError || e instanceof InputError)) {
+        if (e.message && (e instanceof module.exports.NotFoundError || e instanceof module.exports.InputError)) {
             let send = {
                 title: `Error`,
                 description: e.message,

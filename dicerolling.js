@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { InputError, NotFoundError } = require('./errors')
 
 module.exports.roll = command => {
 
