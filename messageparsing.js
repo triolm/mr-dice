@@ -1,4 +1,4 @@
-const { InputError } = require('./errors')
+const { InputError, NotFoundError } = require('./errors')
 const { getItem } = require('./dicerolling.js');
 
 
