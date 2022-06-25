@@ -194,3 +194,7 @@ module.exports.helpObj = new MessageEmbed()
         name: "Further Issues",
         value: "For further issues or questions, join our support server at https://discord.gg/haf48fW2YF."
     })
+module.exports.inviteObj = new MessageEmbed()
+    .setTitle("Invite Mr. Dice to a Server")
+    .setColor(0xD7C363)
+    .setDescription('https://discord.com/api/oauth2/authorize?client_id=800748470931423272&permissions=0&scope=bot%20applications.commands');
