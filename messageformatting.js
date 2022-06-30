@@ -1,4 +1,5 @@
 const { roll, rollSeparate, getItem } = require('./dicerolling.js');
+const fs = require('fs');
 
 const { MessageEmbed } = require("discord.js")
 
@@ -36,6 +37,21 @@ module.exports.formatMsg = command => {
     if (command.mod) send.setTitle(send.title + (command.mod < 0 ? " - " : " + ") + command.mod)
 
     return send;
+}
+
+module.exports.getList = async (type) => {
+    all = JSON.parse(await fs.readFileSync("./lists.txt", "utf8", () => 0))[type];
+    embeds = [new MessageEmbed()
+        .setTitle("All " + type)
+        .setColor(0xD7C363)]
+    for (i of all) {
+        embeds.push(new MessageEmbed()
+            .setDescription(i)
+            // .setTitle("All Spells")
+            .setColor(0xD7C363))
+    }
+    return embeds;
+
 }
 
 module.exports.getDesc = async (item, category) => {
@@ -198,3 +214,7 @@ module.exports.inviteObj = new MessageEmbed()
     .setTitle("Invite Mr. Dice to a Server")
     .setColor(0xD7C363)
     .setDescription('https://discord.com/api/oauth2/authorize?client_id=800748470931423272&permissions=0&scope=bot%20applications.commands');
+
+module.exports.listObj = new MessageEmbed()
+    .setTitle("List was sent to you as a direct message!")
+    .setColor(0xD7C363)

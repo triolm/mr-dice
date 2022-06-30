@@ -1,7 +1,7 @@
 const { Client, MessageEmbed, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 const { parseRoll, parseSpell, parseItem, slashSpell, slashItem } = require('./messageparsing.js');
-const { formatMsg, getDesc, helpObj, inviteObj } = require('./messageformatting.js');
+const { formatMsg, getDesc, helpObj, inviteObj, listObj, getList } = require('./messageformatting.js');
 const commands = require("./commands.js");
 const { handleErr } = require('./errors.js');
 const fs = require('fs');
@@ -63,6 +63,32 @@ client.on('interactionCreate', async interaction => {
 
                 )]
             });
+        }
+        if (interaction.commandName == 'spellslist') {
+            spells = await getList("spells");
+            if (interaction.guild) {
+                client.users.fetch(interaction.member.user.id)
+                    .then(user => user.send({ embeds: spells }).catch(console.error))
+                    .catch(console.error);
+                await interaction.reply({ embeds: [listObj] });
+            } else {
+                await interaction.reply({ embeds: spells });
+
+            }
+
+        }
+        if (interaction.commandName == 'itemslist') {
+            spells = await getList("items");
+            if (interaction.guild) {
+                client.users.fetch(interaction.member.user.id)
+                    .then(user => user.send({ embeds: spells }).catch(console.error))
+                    .catch(console.error);
+                await interaction.reply({ embeds: [listObj] });
+            } else {
+                await interaction.reply({ embeds: spells });
+
+            }
+
         }
 
     } catch (e) {
