@@ -1,4 +1,5 @@
 const { roll, rollSeparate, getItem } = require('./dicerolling.js');
+const fs = require('fs');
 
 const { MessageEmbed } = require("discord.js")
 
@@ -36,6 +37,21 @@ module.exports.formatMsg = command => {
     if (command.mod) send.setTitle(send.title + (command.mod < 0 ? " - " : " + ") + command.mod)
 
     return send;
+}
+
+module.exports.getList = async (type) => {
+    all = JSON.parse(await fs.readFileSync("./lists.txt", "utf8", () => 0))[type];
+    embeds = [new MessageEmbed()
+        .setTitle("All " + type)
+        .setColor(0xD7C363)]
+    for (i of all) {
+        embeds.push(new MessageEmbed()
+            .setDescription(i)
+            // .setTitle("All Spells")
+            .setColor(0xD7C363))
+    }
+    return embeds;
+
 }
 
 module.exports.getDesc = async (item, category) => {
@@ -155,36 +171,45 @@ module.exports.helpObj = new MessageEmbed()
     .setTitle("Commands")
     .setColor(0xD7C363)
     .addFields({
-        name: "!roll <number of dice>d<sides of dice> + <modifier>",
-        value: "Example: !roll 6d8 + 12\nThis rolls 6 eight sided dice and adds 10. Modifier is optional"
+        name: "! prefix commands (deprecated)",
+        value: "__**These will be removed on August 31**__, but if you would still like to use them visit https://top.gg/bot/800748470931423272 for help."
     })
     .addFields({
-        name: "!roll <number of dice>d<sides of dice> + <modifier> separate",
-        value: "Example: !roll 6d8 + 12 separate\nThis rolls 6 eight sided dice and adds 10, and separately displays the rolls."
+        name: "/roll <number of dice> <sides of dice> <modifier> <separate>",
+        value: "This this rolls the given amount of dice each with the given amout of sides. The <modifier> option is a number \
+        added to the total and defaults to zero. The <separate> option displays the individual dice separately and defaults to false."
     })
     .addFields({
-        name: "!cast <spell> + 10",
-        value: "Example: !cast fireball + 10\nThis rolls 8d6, the damage for fireball and adds 10."
+        name: "/cast <spell> <level> <modifier>",
+        value: "This rolls the damage dice for the given D&D spell. The level option allows for upcasting and defaults to the spell's base level. The modifier is a number added to the total."
     })
     .addFields({
-        name: "!cast <spell> lvl 4",
-        value: "Example: !cast fireball lvl 4\nThis rolls 9d6, the damage for fireball when cast at level 4."
+        name: "/weapon <weapon> <modifier>",
+        value: "This rolls the damage dice for the given D&D weapon. The modifier is a number added to the total."
     })
     .addFields({
-        name: "!weapon <weapon> + 10",
-        value: "Example: !weapon shortsword\nThis rolls the default dice for a shortsword and adds 10."
+        name: "/spelldesc <spell>",
+        value: "This retrieves the description of the given D&D spell."
     })
     .addFields({
-        name: "!spelldesc <spell>",
-        value: "Example: !spelldesc fireball\nThis retrieves the description of the spell fireball."
+        name: "/spellslist",
+        value: "This retrieves a list of all the spells available to this bot. It will be sent to you as a DM."
     })
     .addFields({
-        name: "!item <item>",
-        value: "Example: !item shortsword\nThis retrieves the description of a shortsword."
+        name: "/item <item>",
+        value: "This retrieves the description of the given D&D weapon or item."
     })
     .addFields({
-        name: "!magicitem <item>",
-        value: "Example: !magicitem wand of fireballs\nThis retrieves the description of a wand of fireballs."
+        name: "/itemslist",
+        value: "This retrieves a list of all the items available to this bot. It will be sent to you as a DM."
+    })
+    .addFields({
+        name: "/magicitem <item>",
+        value: "This retrieves the description of the given D&D magic item."
+    })
+    .addFields({
+        name: "/invite",
+        value: "This provides the invite link for this bot."
     })
     .addFields({
         name: "Privacy Policy",
@@ -198,3 +223,7 @@ module.exports.inviteObj = new MessageEmbed()
     .setTitle("Invite Mr. Dice to a Server")
     .setColor(0xD7C363)
     .setDescription('https://discord.com/api/oauth2/authorize?client_id=800748470931423272&permissions=0&scope=bot%20applications.commands');
+
+module.exports.listObj = new MessageEmbed()
+    .setTitle("List was sent to you as a direct message!")
+    .setColor(0xD7C363)

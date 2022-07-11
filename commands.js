@@ -73,5 +73,11 @@ module.exports = [
         .setDescription('Description of Mr. Dice commands'),
     new SlashCommandBuilder()
         .setName('invite')
-        .setDescription("Get Mr. Dice's invite link.")
+        .setDescription("Get Mr. Dice's invite link."),
+    new SlashCommandBuilder()
+        .setName('spellslist')
+        .setDescription("Get a list of all of Mr. Dice's spells in a DM."),
+    new SlashCommandBuilder()
+        .setName('itemslist')
+        .setDescription("Get a list of all of Mr. Dice's items in a DM."),
 ]
