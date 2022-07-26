@@ -1,7 +1,7 @@
 const { Client, MessageEmbed, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 const { parseRoll, parseSpell, parseItem, slashSpell, slashItem } = require('./messageparsing.js');
-const { formatMsg, getDesc, helpObj, inviteObj, listObj, getList } = require('./messageformatting.js');
+const { formatMsg, getDesc, helpObj, inviteObj, listObj, getList, deprecation } = require('./messageformatting.js');
 const commands = require("./commands.js");
 const { handleErr } = require('./errors.js');
 const fs = require('fs');
@@ -15,7 +15,7 @@ client.on('messageCreate', async (message) => {
         const { send, called } = await getCmd(message.content)
 
         if (called) {
-            await message.channel.send({ embeds: [send] });
+            await message.channel.send({ embeds: [send, deprecation] });
         }
 
     } catch (e) {

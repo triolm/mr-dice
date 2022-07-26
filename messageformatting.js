@@ -227,3 +227,12 @@ module.exports.inviteObj = new MessageEmbed()
 module.exports.listObj = new MessageEmbed()
     .setTitle("List was sent to you as a direct message!")
     .setColor(0xD7C363)
+
+module.exports.deprecation = new MessageEmbed()
+    .setTitle("Text Commands are Deprecated")
+    .setDescription("Please use slash commands instead (ex. /roll). Text commands (using the ! prefix) \
+    will be removed on August 31, 2022. \nIf slash commands do not work, please reinvite this bot with \
+    [this link](https://discord.com/api/oauth2/authorize?client_id=800748470931423272&permissions=0&scope=bot%20applications.commands).\
+    if you continue to experience issues, join the support server [here](https://discord.gg/haf48fW2YF).")
+    .setColor(0xff6666)
+
