@@ -108,9 +108,9 @@ client.on('interactionCreate', async interaction => {
         })
 })()
 
-client.on("ready", () => {
-    client.user.setActivity('If slash commands do not work please reinvite with !invite', { type: "PLAYING" })
-})
+// client.on("ready", () => {
+//     client.user.setActivity('If slash commands do not work please reinvite with !invite', { type: "PLAYING" })
+// })
 
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
