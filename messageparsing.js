@@ -61,8 +61,6 @@ module.exports.slashSpell = async (spell, lvl, mod) => {
     let command = {}
     let level = lvl
 
-    command.mod = mod
-
     command.item = spell
     spell = await getItem(command.item.replaceAll(" ", "-"), "spells");
     if (!level || !(level in (spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level))) {
@@ -71,6 +69,8 @@ module.exports.slashSpell = async (spell, lvl, mod) => {
     command.item = "Level " + level + " " + command.item;
     try {
         spellDice = getDice((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
+        mod += getMod((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
+        command.mod = mod;
     } catch (e) {
         throw new InputError("Spell does not do damage");
     }
