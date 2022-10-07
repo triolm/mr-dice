@@ -4,7 +4,7 @@ const { InputError, NotFoundError } = require('./errors')
 module.exports.roll = command => {
 
     total = 0
-    for (i = 0; i < command.ndice; i++) {
+    for (let i = 0; i < command.ndice; i++) {
         total += Math.ceil(Math.random() * command.die);
     }
     total += command.mod;
