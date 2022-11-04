@@ -1,6 +1,23 @@
 const axios = require('axios')
 const { InputError, NotFoundError } = require('./errors')
 
+const people = ["aganazzar",
+    "snilloc",
+    "tasha",
+    "otto",
+    "mordenkainen",
+    "agathys",
+    "hadar",
+    "tenser",
+    "melf",
+    "nystul",
+    "bigby",
+    "otiluke",
+    "leomund",
+    "evard",
+    "rary",
+    "drawmij"]
+
 module.exports.roll = command => {
 
     total = 0
@@ -25,6 +42,20 @@ module.exports.rollSeparate = (command) => {
 }
 
 module.exports.getItem = async (item, category = "equipment") => {
+    item = item.trim().replaceAll(" ", "-");
+    if (category == "spells") {
+        console.log(item);
+
+        for (let i of people) {
+            console.log(item);
+            console.log(i);
+            if (item.toLowerCase().includes(i)) {
+                item = item.replace(i + "-", "");
+                item = item.replace(i + "s-", "");
+                item = item.replace(i + "'s-", "");
+            }
+        }
+    }
     try {
         res = await axios.get(`https://www.dnd5eapi.co/api/${category}/${item}`)
         return res.data;
