@@ -65,11 +65,11 @@ module.exports.slashSpell = async (spell, lvl, mod) => {
     command.mod = mod;
 
     spell = await getItem(command.item.replaceAll(" ", "-"), "spells");
-    if (!level || !(level in (spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level))) {
-        level = (spell.level ? spell.level : Object.keys(spell.damage.damage_at_character_level)[0]);
-    }
-    command.item = "Level " + level + " " + command.item;
     try {
+        if (!level || !(level in (spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level))) {
+            level = (spell.level ? spell.level : Object.keys(spell.damage.damage_at_character_level)[0]);
+        }
+        command.item = "Level " + level + " " + command.item;
         spellDice = getDice((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
         spellMod = getRawMod((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
         if (spellMod.includes("d")) {
@@ -100,7 +100,7 @@ module.exports.parseItem = async msg => {
         itemDice = getDice(item.damage.damage_dice);
     }
     catch (e) {
-        throw new InputError("Item does not do damage. Do you mean to do /item?")
+        throw new InputError("Item does not do damage. Do you mean to use /item?")
     }
     command.ndice = itemDice.ndice
     command.die = itemDice.die
@@ -119,7 +119,7 @@ module.exports.slashItem = async (item, mod) => {
         itemDice = getDice(item.damage.damage_dice);
     }
     catch (e) {
-        throw new InputError("Item does not do damage. Do you mean to do /item?")
+        throw new InputError("Item does not do damage. Do you mean to use /item?")
     }
     command.ndice = itemDice.ndice
     command.die = itemDice.die
