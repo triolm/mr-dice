@@ -30,7 +30,7 @@ module.exports = [
                 .setRequired(true)),
     new SlashCommandBuilder()
         .setName('cast')
-        .setDescription('Roll dice for D&D spell')
+        .setDescription('Roll dice for D&D spell (for damage-dealing spells)')
         .addStringOption(option =>
             option.setName('spell')
                 .setDescription('Spell to cast')

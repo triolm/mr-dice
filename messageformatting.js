@@ -159,12 +159,18 @@ module.exports.getDesc = async (item, category) => {
             });
         }
     }
+
     if (data.range) {
         send.addFields({
             name: "Range:",
             value: (data.category_range ? data.category_range : "") + " " + (data.range.normal ?? data.range)
         });
     }
+
+    send.addFields({
+        name: `Compatable with ${data.classes ? "/cast" : "/weapon"}`,
+        value: data.damage ? "Yes" : "No"
+    })
     return send;
 }
 module.exports.helpObj = new MessageEmbed()

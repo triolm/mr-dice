@@ -72,7 +72,7 @@ module.exports.slashSpell = async (spell, lvl, mod) => {
     try {
         spellDice = getDice((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
     } catch (e) {
-        throw new InputError("Spell does not do damage");
+        throw new InputError("Spell does not do damage. Do you mean to use /spelldesc?");
     }
     command.ndice = spellDice.ndice;
     command.die = spellDice.die;
@@ -93,7 +93,7 @@ module.exports.parseItem = async msg => {
         itemDice = getDice(item.damage.damage_dice);
     }
     catch (e) {
-        throw new InputError("Item does not do damage")
+        throw new InputError("Item does not do damage. Do you mean to do /item?")
     }
     command.ndice = itemDice.ndice
     command.die = itemDice.die
@@ -112,7 +112,7 @@ module.exports.slashItem = async (item, mod) => {
         itemDice = getDice(item.damage.damage_dice);
     }
     catch (e) {
-        throw new InputError("Item does not do damage")
+        throw new InputError("Item does not do damage. Do you mean to do /item?")
     }
     command.ndice = itemDice.ndice
     command.die = itemDice.die
