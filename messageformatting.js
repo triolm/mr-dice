@@ -14,16 +14,31 @@ module.exports.formatMsg = command => {
         command.separate = false;
     }
     if (!command.separate) {
-        total = roll(command)
-        send.setTitle(`${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die}`)
-            .setDescription(total + "")
-            .setColor(0xD7C363)
+        if (typeof command.ndice == "number") {
+            total = roll(command)
+            send.setTitle(`${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die}`)
+                .setDescription(total + "")
+                .setColor(0xD7C363)
+        }
+        else {
+            total = 0;
+            string = "";
+            for (let i = 0; i < command.ndice.length; i++) {
+                total += roll({ ndice: command.ndice[i], die: command.die[i], mod: 0 })
+                string += `${command.ndice[i]}d${command.die[i]}`
+                string += i + 1 < command.ndice.length ? " + " : ""
+            }
+            total += command.mod
+            send.setTitle(`${command.item ? command.item + ": " : ""} ${string}`)
+                .setDescription(total + "")
+                .setColor(0xD7C363)
+        }
     }
     else {
         i = rollSeparate(command)
         total = i.total;
         nums = i.nums
-        send.setTitle(`${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die}`)
+        send.setTitle(`${command.item ? command.item + ": " : ""} ${command.ndice}d${command.die} `)
             .setDescription(nums + "")
             .addFields({
                 name: "Total:",

@@ -59,11 +59,11 @@ module.exports.parseSpell = async msg => {
 
 module.exports.slashSpell = async (spell, lvl, mod) => {
     let command = {}
-    let level = lvl
+    let level = lvl;
 
-    command.mod = mod
+    command.item = spell;
+    command.mod = mod;
 
-    command.item = spell
     spell = await getItem(command.item.replaceAll(" ", "-"), "spells");
     if (!level || !(level in (spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level))) {
         level = (spell.level ? spell.level : Object.keys(spell.damage.damage_at_character_level)[0]);
@@ -71,12 +71,19 @@ module.exports.slashSpell = async (spell, lvl, mod) => {
     command.item = "Level " + level + " " + command.item;
     try {
         spellDice = getDice((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
+        spellMod = getRawMod((spell.damage.damage_at_slot_level ?? spell.damage.damage_at_character_level)[level]);
+        if (spellMod.includes("d")) {
+            modDice = spellMod.split("d")
+            spellDice.ndice = [spellDice.ndice, parseInt(modDice[0])]
+            spellDice.die = [spellDice.die, parseInt(modDice[1])]
+        } else {
+            command.mod += parseInt(spellMod);
+        }
     } catch (e) {
         throw new InputError("Spell does not do damage. Do you mean to use /spelldesc?");
     }
     command.ndice = spellDice.ndice;
     command.die = spellDice.die;
-
     return command;
 }
 
@@ -142,6 +149,19 @@ getMod = msg => {
     }
     else {
         mod = 0;
+    }
+    return mod
+}
+
+getRawMod = msg => {
+    if (msg.includes('+')) {
+        mod = msg.split('+')[1];
+    }
+    else if (msg.includes('-')) {
+        mod = "-" + msg.split('-')[1];
+    }
+    else {
+        mod = "0";
     }
     return mod
 }
