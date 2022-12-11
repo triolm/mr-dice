@@ -42,10 +42,10 @@ module.exports.rollSeparate = (command) => {
 }
 
 module.exports.getItem = async (item, category = "equipment") => {
-    item = item.trim().replaceAll(" ", "-");
+    item = item.trim().toLowerCase().replaceAll(" ", "-");
     if (category == "spells") {
         for (let i of people) {
-            if (item.toLowerCase().includes(i)) {
+            if (item.includes(i)) {
                 item = item.replace(i + "-", "");
                 item = item.replace(i + "s-", "");
                 item = item.replace(i + "'s-", "");

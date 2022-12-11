@@ -125,39 +125,3 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
         console.error(error);
     }
 })();
-
-
-
-// getCmd = async (message) => {
-//     send = ""
-//     called = true;
-//     if (!message.startsWith('!')) return { send, called: false };
-
-//     if (message.startsWith("!roll")) {
-//         let command = parseRoll(message.trim().replace('!roll', ''));
-//         send = formatMsg(command);
-//     } else if (message.startsWith('!cast')) {
-//         let command = await parseSpell(message.trim().replace('!cast', ''));
-//         send = formatMsg(command);
-//     } else if (message.startsWith('!weapon')) {
-//         let command = await parseItem(message.trim().replace('!weapon', ''));
-//         send = formatMsg(command);
-//     } else if (message.startsWith("!item")) {
-//         let command = message.replace('!item', '').trim().replaceAll(" ", "-").toLowerCase();
-//         send = await getDesc(command, "equipment");
-//     } else if (message.toLowerCase().startsWith("!magicitem")) {
-//         let command = message.replace('!magicitem', '').trim().replaceAll(" ", "-").toLowerCase();
-//         send = await getDesc(command, "magic-items");
-//     } else if (message.toLowerCase().startsWith("!spelldesc")) {
-//         let command = message.replace('!spelldesc', '').trim().replaceAll(" ", "-").toLowerCase();
-//         send = await getDesc(command, "spells");
-//     } else if (message.toLowerCase().startsWith("!help")) {
-//         send = helpObj;
-//     } else if (message.toLowerCase().startsWith("!invite")) {
-//         send = inviteObj;
-//     } else {
-//         called = false;
-//     }
-
-//     return { send, called }
-// }
