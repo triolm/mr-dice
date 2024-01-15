@@ -4,7 +4,7 @@
   "description": "A simple dice rolling and D&D discord bot.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node shards.js"
   },
   "engines": {
     "node": "16.x"
