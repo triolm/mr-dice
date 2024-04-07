@@ -8,7 +8,10 @@ module.exports.formatMsg = command => {
     let send = new MessageEmbed()
 
     if (command.ndice > 1000000 || command.die > 1000000) {
-        throw new InputError("Numbers too large")
+        throw new InputError("Values too large")
+    }
+    if (command.ndice < 1 || command.die < 1) {
+        throw new InputError("Values must be greater than 0")
     }
     if (command.ndice > 100) {
         command.separate = false;
