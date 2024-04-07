@@ -1,4 +1,5 @@
 const { roll, rollSeparate, getItem } = require('./dicerolling.js');
+const { InputError } = require('./errors')
 const fs = require('fs');
 
 const { MessageEmbed } = require("discord.js")
